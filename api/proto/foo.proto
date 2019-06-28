@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+service Foo {
+    rpc Echo(FooForm) returns(FooResponse) {}
+}
+
+message FooForm{
+    string foo = 1;
+}
+
+message FooResponse{
+    string bar = 1;
+}
