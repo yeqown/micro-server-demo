@@ -7,6 +7,7 @@ import (
 	"github.com/yeqown/micro-server-demo/internal/model"
 	"github.com/yeqown/micro-server-demo/internal/repository"
 	_grpc "github.com/yeqown/micro-server-demo/internal/server/grpc"
+	_http "github.com/yeqown/micro-server-demo/internal/server/http"
 
 	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli"
@@ -57,6 +58,14 @@ func getStartServerCommand() cli.Command {
 			},
 		},
 		Action: func(c *cli.Context) error {
+			httpPort := c.Int("httpPort")
+			go func() {
+				_httpSrv := _http.New(fooRepo, httpPort)
+				if err := _httpSrv.Run(); err != nil {
+					log.Fatal(err)
+				}
+			}()
+
 			rpcPort := c.Int("rpcPort")
 			_grpcSrv := _grpc.New(fooRepo, rpcPort)
 			log.Printf("running gRPC server on: %d\n", rpcPort)
