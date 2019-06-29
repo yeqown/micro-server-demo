@@ -2,12 +2,15 @@ package clientcase
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
 	protogen "github.com/yeqown/micro-server-demo/api/protogen"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 var (
@@ -59,7 +62,12 @@ func Echo(in *protogen.FooForm) (*protogen.FooResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
-	resp, err := _hdl.client.Echo(ctx, in)
+	nCtx := metautils.NiceMD(
+		metadata.Pairs("authorization", fmt.Sprintf(
+			"%s %v", "schema", "tokenthis")),
+	).ToOutgoing(ctx)
+
+	resp, err := _hdl.client.Echo(nCtx, in)
 	_hdl.lastGrpcReqError = err
 	return resp, err
 }

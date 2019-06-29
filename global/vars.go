@@ -6,7 +6,8 @@ import (
 
 // Config .
 type Config struct {
-	Mysql *types.MysqlC `json:"mysql"`
+	Mysql   *types.MysqlC        `json:"mysql"`
+	Sqlite3 *types.SQLite3Config `json:"sqlite3"`
 }
 
 var (

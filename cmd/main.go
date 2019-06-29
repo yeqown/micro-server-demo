@@ -9,7 +9,8 @@ import (
 	"github.com/yeqown/infrastructure/types"
 	"github.com/yeqown/micro-server-demo/global"
 
-	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/go-sql-driver/mysql"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/urfave/cli"
 	"github.com/yeqown/infrastructure/pkg/cfgutil"
 )
