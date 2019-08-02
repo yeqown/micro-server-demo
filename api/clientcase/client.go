@@ -42,17 +42,19 @@ type handler struct {
 }
 
 func (h *handler) connect() {
-	if h.client != nil && h.lastGrpcReqError != nil {
-		opts := grpc.WithInsecure()
-		conn, err := grpc.Dial(h.rpcAddr, opts)
-		if err != nil {
-			log.Printf("[Error] could not dial: %s with err: %v", h.rpcAddr, err)
-			return
-		}
+	// if h.client != nil && h.lastGrpcReqError != nil {
+	// 	opts := grpc.WithInsecure()
+	// 	conn, err := grpc.Dial(h.rpcAddr, opts)
+	// 	if err != nil {
+	// 		log.Printf("[Error] could not dial: %s with err: %v", h.rpcAddr, err)
+	// 		return
+	// 	}
 
-		log.Printf("usersvc.client.connect called")
-		h.client = protogen.NewFooClient(conn)
-	}
+	// 	log.Printf("usersvc.client.connect called")
+	// 	h.client = protogen.NewFooClient(conn)
+	// }
+
+	// Changed: do nothing should not retry manually
 }
 
 // Echo .
