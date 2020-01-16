@@ -3,12 +3,21 @@ package http
 import (
 	"net/http"
 
+	"github.com/yeqown/micro-server-demo/global"
+	"github.com/yeqown/micro-server-demo/internal/modules/demo/usecase"
+
 	"github.com/gin-gonic/gin"
-	"github.com/yeqown/micro-server-demo/internal/service"
 )
 
 type fooHandler struct {
-	uc service.FooUsecase
+	uc usecase.FooUsecase
+}
+
+// New .
+func New() fooHandler {
+	return fooHandler{
+		uc: usecase.NewFooUsecase(global.Repos.FooRepo),
+	}
 }
 
 func (hdl fooHandler) Bar(c *gin.Context) {

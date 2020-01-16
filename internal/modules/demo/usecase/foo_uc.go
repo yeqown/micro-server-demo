@@ -1,8 +1,8 @@
-package service
+package usecase
 
 import (
-	"github.com/yeqown/micro-server-demo/internal/model"
-	"github.com/yeqown/micro-server-demo/internal/repository"
+	"github.com/yeqown/micro-server-demo/model"
+	"github.com/yeqown/micro-server-demo/repository"
 )
 
 // FooUsecase .

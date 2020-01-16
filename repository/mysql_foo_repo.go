@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/yeqown/micro-server-demo/internal/model"
+	"github.com/yeqown/micro-server-demo/model"
 
 	"github.com/jinzhu/gorm"
 )

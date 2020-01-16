@@ -1,4 +1,4 @@
-package grpc
+package router
 
 import (
 	"context"
@@ -7,8 +7,10 @@ import (
 	"net"
 
 	protogen "github.com/yeqown/micro-server-demo/api/protogen"
-	"github.com/yeqown/micro-server-demo/internal/repository"
-	"github.com/yeqown/micro-server-demo/internal/service"
+	"github.com/yeqown/micro-server-demo/global"
+	"github.com/yeqown/micro-server-demo/internal/modules/demo/usecase"
+
+	logger "github.com/yeqown/infrastructure/framework/logrus-logger"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -16,21 +18,29 @@ import (
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
-	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/reflection"
 )
+
+func (s *gRPCServer) Echo(ctx context.Context, form *protogen.FooForm) (*protogen.FooResponse, error) {
+	tokenInfo := ctx.Value(tokenKey)
+	log.Printf("get tokenInfo: %v", tokenInfo)
+
+	bar := form.Foo
+	return &protogen.FooResponse{Bar: bar}, nil
+}
 
 type gRPCServer struct {
 	port  int
-	fooUC service.FooUsecase
+	fooUC usecase.FooUsecase
 }
 
-// New .
-func New(fooRepo repository.FooRepo, port int) *gRPCServer {
+// NewgRPC .
+func NewgRPC(port int) *gRPCServer {
 	return &gRPCServer{
 		port:  port,
-		fooUC: service.NewFooUsecase(fooRepo),
+		fooUC: usecase.NewFooUsecase(global.Repos.FooRepo),
 	}
 }
 
@@ -46,7 +56,7 @@ func (s *gRPCServer) Run() error {
 	}
 
 	// Logrus entry is used, allowing pre-definition of certain fields by the user.
-	logrusEntry := logrus.NewEntry(logrus.New())
+	logrusEntry := logger.Log.WithField("service", "micro-server-demo")
 	// Shared options for the logger, with a custom gRPC code to log level function.
 	opts := []grpc_logrus.Option{
 		// grpc_logrus.WithLevels(grpc_logrus.customFunc),
@@ -60,7 +70,7 @@ func (s *gRPCServer) Run() error {
 			grpc_ctxtags.StreamServerInterceptor(),
 			grpc_opentracing.StreamServerInterceptor(),
 			// grpc_prometheus.StreamServerInterceptor,
-			grpc_auth.StreamServerInterceptor(myAuthFunction),
+			// grpc_auth.StreamServerInterceptor(myAuthFunction),
 			grpc_logrus.StreamServerInterceptor(logrusEntry, opts...),
 			grpc_recovery.StreamServerInterceptor(),
 		)),
@@ -68,12 +78,13 @@ func (s *gRPCServer) Run() error {
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_opentracing.UnaryServerInterceptor(),
 			// grpc_prometheus.UnaryServerInterceptor,
-			grpc_auth.UnaryServerInterceptor(myAuthFunction),
+			// grpc_auth.UnaryServerInterceptor(myAuthFunction),
 			grpc_logrus.UnaryServerInterceptor(logrusEntry, opts...),
 			grpc_recovery.UnaryServerInterceptor(),
 		)),
 	)
 
+	reflection.Register(grpcSrv)
 	protogen.RegisterFooServer(grpcSrv, s)
 
 	return grpcSrv.Serve(l)
@@ -96,6 +107,7 @@ func myAuthFunction(ctx context.Context) (context.Context, error) {
 	}
 	tokenInfo, err := parseToken(token)
 	if err != nil {
+		logger.Log.Warnf("router.myAuthFunction failed to parseToken, err=%v", err)
 		return nil, grpc.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
 	}
 	// grpc_ctxtags.Extract(ctx).Set("auth.sub", userClaimFromToken(tokenInfo))

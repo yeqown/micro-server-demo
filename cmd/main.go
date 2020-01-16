@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -17,28 +18,30 @@ import (
 
 func init() {
 	var (
-		curEnv types.Envrion
-		cfg    = new(global.Config)
+		cfg = new(global.Config)
+		fd  io.ReadCloser
+		err error
 	)
 
-	env := strings.TrimSpace(os.Getenv("ENV"))
-	curEnv = types.ParseEnvrion(env)
+	curEnv := types.ParseEnvrion(
+		strings.TrimSpace(os.Getenv("ENV")))
 	global.SetEnv(curEnv)
 
-	rcloser, err := cfgutil.Open(
-		fmt.Sprintf("configs/%s.json", curEnv.String()),
-	)
-	if err != nil {
-		log.Fatalf("could not open config file: %v", err)
-	}
-
-	// load JSON config file depends on `curEnv`
-	if err := cfgutil.LoadJSON(rcloser, cfg); err != nil {
+	if fd, err = cfgutil.Open(
+		fmt.Sprintf("configs/%s.json", curEnv)); err != nil {
 		panic(err)
 	}
-	defer rcloser.Close()
+	defer fd.Close()
+
+	// load JSON config file depends on `curEnv`
+	if err := cfgutil.LoadJSON(fd, cfg); err != nil {
+		panic(err)
+	}
 
 	global.SetConfig(cfg)
+	if err = global.InitRepos(cfg); err != nil {
+		panic(err)
+	}
 }
 
 // RUN GRPC SERVER and REST-HTTP SERVER
