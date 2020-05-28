@@ -1,9 +1,13 @@
 # internal
 
+internal package is about application logic. it CAN NOT be imported by other project.
+
+
+it contains:
+
 ```sh
 .
-├── model       // models for form / db / svc
-├── repository  // repo to manage data in DB
-├── server      // server includes HTTP / REST
-└── service     // logic functions
+├── README.md
+├── modules     // application logic modules
+└── extention   // project extention
 ```
