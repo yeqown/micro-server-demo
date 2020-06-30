@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"github.com/yeqown/micro-server-demo/model"
+	"github.com/yeqown/micro-server-demo/pkg/types"
 
 	"github.com/jinzhu/gorm"
 )
 
 // FooRepo is DAO in golang
 type FooRepo interface {
-	Create(m *model.FooModel) error
+	Create(m *types.FooModel) error
 	Count(wheres string) (int, error)
 	// and more methods to interact
 }
@@ -23,7 +23,7 @@ type fooRepo struct {
 }
 
 // Create of fooRepo.
-func (repo fooRepo) Create(m *model.FooModel) error {
+func (repo fooRepo) Create(m *types.FooModel) error {
 	return nil
 }
 

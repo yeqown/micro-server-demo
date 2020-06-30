@@ -1,13 +1,13 @@
 package usecase
 
 import (
-	"github.com/yeqown/micro-server-demo/model"
-	"github.com/yeqown/micro-server-demo/repository"
+	"github.com/yeqown/micro-server-demo/internal/repository"
+	"github.com/yeqown/micro-server-demo/pkg/types"
 )
 
 // FooUsecase .
 type FooUsecase interface {
-	Create(form *model.FooCreateForm) error
+	Create(form *types.FooCreateForm) error
 	Count() (int, error)
 }
 
@@ -21,8 +21,8 @@ type fooUsecase struct {
 }
 
 // Create method of fooUsecase.
-func (uc fooUsecase) Create(form *model.FooCreateForm) error {
-	m := &model.FooModel{
+func (uc fooUsecase) Create(form *types.FooCreateForm) error {
+	m := &types.FooModel{
 		Bar: form.Bar,
 	}
 	return uc.repo.Create(m)

@@ -1,4 +1,4 @@
-package model
+package types
 
 // FooSvc is struct which provided to service layer and handle layer
 type FooSvc struct {

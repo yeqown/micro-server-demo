@@ -1,18 +1,18 @@
-package global
+package types
 
 import (
-	"github.com/yeqown/infrastructure/types"
+	types2 "github.com/yeqown/infrastructure/types"
 )
 
 // Config .
 type Config struct {
-	Mysql   *types.MysqlC        `json:"mysql"`
-	Sqlite3 *types.SQLite3Config `json:"sqlite3"`
+	Mysql   *types2.MysqlC        `json:"mysql"`
+	Sqlite3 *types2.SQLite3Config `json:"sqlite3"`
 }
 
 var (
 	_cfg    = new(Config)
-	_curEnv types.Envrion
+	_curEnv types2.Envrion
 )
 
 // SetConfig .
@@ -26,11 +26,11 @@ func GetConfig() *Config {
 }
 
 // SetEnv .
-func SetEnv(env types.Envrion) {
+func SetEnv(env types2.Envrion) {
 	_curEnv = env
 }
 
 // GetEnv .
-func GetEnv() types.Envrion {
+func GetEnv() types2.Envrion {
 	return _curEnv
 }

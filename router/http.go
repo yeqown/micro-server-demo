@@ -31,7 +31,7 @@ func (s httpServer) Run() error {
 
 // MountRouters .
 func (s httpServer) mountRouters() {
-	// use middlewares
+	// use middleware
 	s.engi.Use(gin.Logger())
 	s.engi.Use(gin.Recovery())
 	// mount routers

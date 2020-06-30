@@ -1,7 +1,8 @@
 package global
 
 import (
-	"github.com/yeqown/micro-server-demo/repository"
+	"github.com/yeqown/micro-server-demo/internal/repository"
+	"github.com/yeqown/micro-server-demo/pkg/types"
 
 	"github.com/yeqown/infrastructure/framework/gormic"
 	logger "github.com/yeqown/infrastructure/framework/logrus-logger"
@@ -12,6 +13,8 @@ import (
 )
 
 var (
+	_cfg *types.Config
+
 	_mysqlDB     *gorm.DB
 	_redisClient *redis.Client
 	_mgoSession  *mgo.Session
@@ -19,6 +22,10 @@ var (
 	// Repos of current services
 	Repos wholeRepo
 )
+
+func GetConfig() *types.Config {
+	return _cfg
+}
 
 // GetMysqlDB .
 func GetMysqlDB() *gorm.DB {
@@ -40,7 +47,7 @@ type wholeRepo struct {
 }
 
 // InitRepos .
-func InitRepos(cfg *Config) error {
+func InitRepos(cfg *types.Config) error {
 	_mysqlDB, err := gormic.ConnectSqlite3(cfg.Sqlite3)
 	if err != nil {
 		logger.Log.Errorf("global.InitRepos failed to connect sqlDB, err=%v", err)

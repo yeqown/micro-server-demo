@@ -7,9 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/yeqown/infrastructure/types"
 	"github.com/yeqown/micro-server-demo/global"
+	types2 "github.com/yeqown/micro-server-demo/pkg/types"
 
+	"github.com/yeqown/infrastructure/types"
 	// _ "github.com/go-sql-driver/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/urfave/cli"
@@ -18,14 +19,14 @@ import (
 
 func init() {
 	var (
-		cfg = new(global.Config)
+		cfg = new(types2.Config)
 		fd  io.ReadCloser
 		err error
 	)
 
 	curEnv := types.ParseEnvrion(
 		strings.TrimSpace(os.Getenv("ENV")))
-	global.SetEnv(curEnv)
+	types2.SetEnv(curEnv)
 
 	if fd, err = cfgutil.Open(
 		fmt.Sprintf("configs/%s.json", curEnv)); err != nil {
@@ -38,7 +39,7 @@ func init() {
 		panic(err)
 	}
 
-	global.SetConfig(cfg)
+	types2.SetConfig(cfg)
 	if err = global.InitRepos(cfg); err != nil {
 		panic(err)
 	}
